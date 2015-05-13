@@ -32,5 +32,11 @@ namespace LifeBoat.Web.Controllers
 		{
 			return View();
 		}
+
+		[Authorize]
+		public ActionResult Play()
+		{
+			return View();
+		}
 	}
 }
