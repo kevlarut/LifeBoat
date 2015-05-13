@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeBoat.Web", "LifeBoat.Web\LifeBoat.Web.csproj", "{51FDCDE1-1D3F-46E1-A4F6-B2814644203E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeBoat.Services", "LifeBoat.Services\LifeBoat.Services.csproj", "{379562BE-204C-4916-B559-7D1ACEEB8151}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{51FDCDE1-1D3F-46E1-A4F6-B2814644203E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51FDCDE1-1D3F-46E1-A4F6-B2814644203E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51FDCDE1-1D3F-46E1-A4F6-B2814644203E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{379562BE-204C-4916-B559-7D1ACEEB8151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{379562BE-204C-4916-B559-7D1ACEEB8151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{379562BE-204C-4916-B559-7D1ACEEB8151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{379562BE-204C-4916-B559-7D1ACEEB8151}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
