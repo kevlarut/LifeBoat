@@ -17,18 +17,22 @@
 
 
 namespace LifeBoat.Web.DependencyResolution {
-    using StructureMap;
-	
-    public static class IoC {
+	using LifeBoat.Web.Models;
+	using StructureMap;
+
+	public static class IoC {
         public static IContainer Initialize() {
 			
-			return new Container(c =>
+			return new Container(x =>
 			{
-				c.Scan(scan =>
+				x.Scan(scan =>
 				{
 					scan.Assembly("LifeBoat.Services");
+					scan.Assembly("LifeBoat.Web");
 					scan.WithDefaultConventions();
 				});
+				x.For<Microsoft.AspNet.Identity.IUserStore<ApplicationUser>>().Use<Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>>();
+				x.For<System.Data.Entity.DbContext>().Use(() => new ApplicationDbContext());
 			});
         }
     }

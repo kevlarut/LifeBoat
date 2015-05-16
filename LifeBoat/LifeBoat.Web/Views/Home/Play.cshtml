@@ -2,39 +2,85 @@
 	ViewBag.Title = "Game in Progress";
 }
 <h2>@ViewBag.Title</h2>
-<div class="container">
-	<input type="text" id="message" />
-	<input type="button" id="sendmessage" value="Send" />
-	<input type="hidden" id="displayname" />
-	<ul id="discussion"></ul>
+<div class="container" ng-app="gameApp">
+	<div ng-controller="gameController" ng-class="isDay() ? 'day' : 'night'" id="gameControllerDiv">
+		<div style="float:left; margin-right: 20px; width:300px;">
+			<textarea style="width: 300px; height: 500px;" id="log">{{getFlattenedLog()}}</textarea>
+			<div>
+				<input type="text" id="message" />
+				<input type="button" id="sendmessage" value="Send" />
+			</div>
+		</div>
+		<div>
+			<div>
+				{{getTimePeriod()}}<br />
+				Survivors ({{survivors.length}}):
+			</div>
+			<div ng-repeat="survivor in survivors">
+				<button ng-click="voteKill(survivor.name);" ng-disabled="!canVoteKill()">Vote</button>
+				{{survivor.name}}
+				<span ng-show="countVotes(survivor.name) > 0"><b>{{countVotes(survivor.name)}} votes</b></span>
+				<span ng-show="survivor.isSleeping">(sleeping)</span>
+			</div>
+
+			<p>
+				Rations left: {{rations}}<br />
+				Days until starvation: {{daysOfRationsRemaining()}}<br />
+				Days until rescue: {{daysRemaining}}<br />
+				Number of killings required for everyone else to survive: {{numberOfKillingsRequiredForEveryoneElseToSurvive()}}<br />
+				{{votesRequiredToThrowSomeoneOverboard()}} votes are required to throw someone overboard.
+			</p>
+
+			<p>
+				<button ng-click="advanceTime()">End {{isDay() ? 'day' : 'night'}}</button>
+				<button ng-click="clearLog()">Clear log</button>
+				<button ng-click="stayAwake()" ng-disabled="!isDay()">Stay awake</button>
+			</p>
+
+		</div>
+
+		<div style="clear:both;"></div>
+	</div>
 </div>
 @section scripts {
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+	<script src="~/Scripts/angular/gameApp.js"></script>
+	<script src="~/Scripts/angular/gameController.js"></script>
+
 	<script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
 	<script src="~/signalr/hubs"></script>
 	<script>
-        $(function () {
-            var gameHub = $.connection.gameHub;
-            gameHub.client.receiveChat = function (name, message) {
-                $('#discussion').append('<li><strong>' + htmlEncode(name)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
-            };
-            gameHub.client.announceJoinedPlayer = function (name) {
-            	$('#discussion').append('<li><strong>' + htmlEncode(name) + '</strong> has joined the game.</li>');
-            }; 
-            $('#message').focus();
-            $.connection.hub.start().done(function () {
+		$(function () {
 
-            	gameHub.server.join();
+			var angularAppendLog = function (line) {
+				angular.element('#gameControllerDiv').scope().appendLog(line);
+				angular.element('#gameControllerDiv').scope().$apply();
+			};
 
-                $('#sendmessage').click(function () {
-                	gameHub.server.sendChat($('#message').val());
-                    $('#message').val('').focus();
-                });
-            });
-        });
-        function htmlEncode(value) {
-            var encodedValue = $('<div />').text(value).html();
-            return encodedValue;
-        }
+			var gameHub = $.connection.gameHub;
+			gameHub.client.receiveChat = function (name, message) {
+				var line = htmlEncode(name) + ': ' + htmlEncode(message);
+				angularAppendLog(line);
+			};
+			gameHub.client.announceJoinedPlayer = function (name) {
+				var line = htmlEncode(name) + ' has joined the game.';
+				angularAppendLog(line);
+			};
+			$('#message').focus();
+			$.connection.hub.start().done(function () {
+
+				gameHub.server.join();
+
+				$('#sendmessage').click(function () {
+					gameHub.server.sendChat($('#message').val());
+					$('#message').val('').focus();
+				});
+			});
+		});
+		function htmlEncode(value) {
+			var encodedValue = $('<div />').text(value).html();
+			return encodedValue;
+		}
 	</script>
 }
