@@ -1,6 +1,6 @@
 var gameApp = angular.module('gameApp');
 
-gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $timeout) {
+gameApp.controller('gameController', ['$rootScope', '$scope', '$timeout', 'gameHubService', function ($rootScope, $scope, $timeout, gameHubService) {
  
 	$scope.lastUpdated = new Date();
 	
@@ -12,6 +12,18 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 	$scope.daysRemaining = 8;
 	$scope.currentPeriod = 0;
 	
+	$scope.htmlEncode = function(value) {
+		var encodedValue = $('<div />').text(value).html();
+		return encodedValue;
+	};
+
+	$rootScope.$on('receiveChat', function (event, name, message) {
+	    $scope.$apply(function () {
+	        var line = $scope.htmlEncode(name) + ': ' + $scope.htmlEncode(message);
+	        $scope.appendLog(line);
+	    });
+	});
+
 	$scope.getTimePeriod = function() {
 		var isDay = $scope.isDay();
 		var day = Math.floor($scope.currentPeriod / 2) + 1;
@@ -50,7 +62,7 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 	}
 	
 	$scope.clearLog = function() {
-		$scope.log = [];
+	    $scope.log = [];
 	}
 	
 	$scope.canVoteKill = function() {
@@ -198,7 +210,8 @@ gameApp.controller('gameController', ['$scope', '$timeout', function($scope, $ti
 	}
 	
 	$scope.init = function() {
-		$scope.loadSurvivors();
+	    $scope.loadSurvivors();
+	    gameHubService.initialize();
 	}
 	
 	$scope.init();	
